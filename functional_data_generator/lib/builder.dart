@@ -59,9 +59,10 @@ String _generateDataType(Element element) {
   final copyWith =
       '$className copyWith({${fields.map((f) => '${f.type} ${f.name}').join(', ')}}) => $className(${fields.map((f) => '${f.name}: ${f.name} ?? this.${f.name}').join(', ')});';
 
-  final equality = 'bool operator ==(dynamic other) => ${([
-        'other.runtimeType == runtimeType'
-      ] + fields.map((f) => '${_generateEquality(f)}').toList()).join(' && ')};';
+  final equality =
+      'bool operator ==(dynamic other) => identical(this, other) || (${([
+            'other.runtimeType == runtimeType'
+          ] + fields.map((f) => '${_generateEquality(f)}').toList()).join(' && ')});';
 
   final hash =
       '@override int get hashCode { var result = 17; ${fields.map((f) => 'result = 37 * result + ${_generateHash(f)};').join()} return result; }';
@@ -72,13 +73,28 @@ String _generateDataType(Element element) {
     return 'static final $name = Lens<$className, $type>((s_) => s_.$name, (s_, $name) => s_.copyWith($name: $name));';
   });
 
-  final constructor = 'const \$$className();';
-
-  final dataClass =
-      'abstract class \$$className { ${fieldDeclarations.join()} $constructor $copyWith $toString $equality $hash }';
+  final mixinClass =
+      'abstract class ${className}Mixin { ${fieldDeclarations.join()} $copyWith $toString $equality $hash }';
   final lensesClass = 'class $className\$ { ${lenses.join()} }';
 
-  return '$dataClass $lensesClass';
+  const lintRules = '\n'
+      '// ignore_for_file: '
+      'always_put_control_body_on_new_line,'
+      'always_specify_types,'
+      'annotate_overrides,'
+      'avoid_annotating_with_dynamic,'
+      'avoid_as,'
+      'avoid_catches_without_on_clauses,'
+      'avoid_returning_this,'
+      'lines_longer_than_80_chars,'
+      'omit_local_variable_types,'
+      'prefer_expression_function_bodies,'
+      'sort_constructors_first,'
+      'test_types_in_equals,'
+      'unnecessary_const,'
+      'unnecessary_new\n\n';
+
+  return '$lintRules $mixinClass $lensesClass';
 }
 
 TypeAnnotation _findTypeNode(FieldElement element) {
