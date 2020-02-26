@@ -73,8 +73,12 @@ String _generateDataType(Element element) {
     return 'static final $name = Lens<$className, $type>((s_) => s_.$name, (s_, $name) => s_.copyWith($name: $name));';
   });
 
+  final typeParameters = classElement.typeParameters.isNotEmpty
+      ? '<${classElement.typeParameters.join(', ')}>'
+      : '';
+
   final mixinClass =
-      'abstract class ${className}Mixin { ${fieldDeclarations.join()} $copyWith $toString $equality $hash }';
+      'abstract class ${className}Mixin$typeParameters { ${fieldDeclarations.join()} $copyWith $toString $equality $hash }';
   final lensesClass = 'class $className\$ { ${lenses.join()} }';
 
   const lintRules = '\n'
