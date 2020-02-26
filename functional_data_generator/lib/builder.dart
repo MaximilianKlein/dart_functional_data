@@ -79,7 +79,6 @@ String _generateDataType(Element element) {
 
   final mixinClass =
       'abstract class ${className}Mixin$typeParameters { ${fieldDeclarations.join()} $copyWith $toString $equality $hash }';
-  final lensesClass = 'class $className\$ { ${lenses.join()} }';
 
   const lintRules = '\n'
       '// ignore_for_file: '
@@ -98,7 +97,7 @@ String _generateDataType(Element element) {
       'unnecessary_const,'
       'unnecessary_new\n\n';
 
-  return '$lintRules $mixinClass $lensesClass';
+  return '$lintRules $mixinClass';
 }
 
 TypeAnnotation _findTypeNode(FieldElement element) {
